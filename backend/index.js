@@ -13,7 +13,12 @@ dotenv.config({});
 
 const PORT = process.env.PORT || 3000;
 
-
+const corsOptions = {
+ origin: '*',
+    
+  credentials: true,
+};  
+app.use(cors(corsOptions));
 
 
 app.get('/', (req, res) => {
@@ -28,12 +33,7 @@ app.get('/', (req, res) => {
 app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
-const corsOptions = {
- origin: process.env.FRONTEND_URL,
-    
-  credentials: true,
-};  
-app.use(cors(corsOptions));
+
 
 //API routers
 app.use("/api/v1/user", userRoute);
