@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar.jsx";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog.jsx";
 import { Bookmark, MessageCircle, MoreHorizontal, Send } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "./ui/button.jsx";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import CommentDialog from "./CommentDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios";
 import { setPosts, setSelectedPost } from "@/redux/postSlice";
-import { Badge } from '../components/ui/badge'
+import { Badge } from '../components/ui/badge.jsx'
 
 const Post = ({ post }) => {
   const [text, setText] = useState("");

@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react'
-import { Dialog, DialogContent, DialogHeader } from './ui/dialog'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Textarea } from './ui/textarea';
-import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogHeader } from './ui/dialog.jsx'
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar.jsx';
+import { Textarea } from './ui/textarea.jsx';
+import { Button } from './ui/button.jsx';
 import { readFileAsDataURL } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';

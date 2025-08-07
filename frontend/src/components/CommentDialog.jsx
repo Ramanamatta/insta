@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
-import { Avatar, AvatarFallback,AvatarImage} from "./ui/avatar";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog.jsx";
+import { Avatar, AvatarFallback,AvatarImage} from "./ui/avatar.jsx";
 import { Link } from "react-router-dom";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
