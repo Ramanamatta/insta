@@ -8,7 +8,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors:{
-        origin:"https://insta-indol-sigma.vercel.app" ,// production frontend
+        origin:process.env.FRONTEND_URL ,// production frontend
     
         methods:['GET','POST']
     }
