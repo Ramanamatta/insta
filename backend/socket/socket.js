@@ -8,10 +8,8 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors:{
-        origin: [
-      "http://localhost:5173", // local dev
-      "https://insta-git-main-ramanamattas-projects.vercel.app" // production frontend
-    ],
+        origin:"https://insta-git-main-ramanamattas-projects.vercel.app" ,// production frontend
+    
         methods:['GET','POST']
     }
 })
