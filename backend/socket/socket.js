@@ -8,7 +8,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors:{
-        origin:"https://insta-git-main-ramanamattas-projects.vercel.app" ,// production frontend
+        origin:"https://insta-indol-sigma.vercel.app" ,// production frontend
     
         methods:['GET','POST']
     }

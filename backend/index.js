@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({ extended: true }));
 const corsOptions = {
- origin: "https://insta-git-main-ramanamattas-projects.vercel.app",
+ origin: "https://insta-indol-sigma.vercel.app",
     
   credentials: true,
 };  
