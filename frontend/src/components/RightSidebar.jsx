@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar.jsx";
 import { useSelector } from "react-redux";
 import store from "@/redux/store";
 import { Link } from "react-router-dom";

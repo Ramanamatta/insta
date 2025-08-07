@@ -14,6 +14,7 @@ const EditProfile = () => {
   const immageRef = useRef();
   const [loading,setLoading]=useState(false);
   const { user } = useSelector((store) => store.auth);
+  const API_URL = import.meta.env.VITE_API_URL;
   const [input,setInput]=useState({
     profilePhoto:user?.profilePicture,
     bio:user?.bio,
@@ -48,7 +49,7 @@ const EditProfile = () => {
 
   try {
       setLoading(true);
-      const res=await axios.post('https://insta-auzq.onrender.com/api/v1/user/profile/edit',formData,{
+      const res=await axios.post(`${API_URL}/api/v1/user/profile/edit`,formData,{
         headers: {
           "Content-Type": "multipart/form-data",
         },

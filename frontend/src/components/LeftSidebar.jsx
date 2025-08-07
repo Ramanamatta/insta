@@ -25,6 +25,7 @@ const LeftSidebar = () => {
   const { likeNotifications } = useSelector(store => store.realTimeNotifications);
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const sidebarItems = [
     { icon: <Home />, text: "Home" },
@@ -51,7 +52,7 @@ const LeftSidebar = () => {
   const logoutHandler = async () => {
 
     try {
-      const res = await axios.get("https://insta-auzq.onrender.com/api/v1/user/logout", { withCredentials: true });
+      const res = await axios.get(`${API_URL}/api/v1/user/logout`, { withCredentials: true });
       if (res.data.success) {
         dispatch(setAuthUser(null));
         dispatch(setSelectedPost(null));

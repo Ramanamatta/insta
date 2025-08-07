@@ -15,12 +15,13 @@ const ChatPage = () => {
     const { onlineUsers, messages } = useSelector((store) => store.chat);
     const [text, setText] = useState("");
     const dispatch = useDispatch();
+    const API_URL = import.meta.env.VITE_API_URL;
     console.log(selectedUser)
-
+   
 
     const sendMessageHandler = async (receiverId) => {
         try {
-            const res = await axios.post(`https://insta-auzq.onrender.com/api/v1/message/send/${receiverId}`, { text }, {
+            const res = await axios.post(`${API_URL}/api/v1/message/send/${receiverId}`, { text }, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

@@ -18,6 +18,7 @@ const Post = ({ post }) => {
   const { posts } = useSelector((store) => store.post);
   const [comment, setComment] = useState(post.comments);
   const dispatch = useDispatch();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Derived liked state (not useState)
   const liked = post.likes.includes(user?._id);
@@ -30,7 +31,7 @@ const Post = ({ post }) => {
   const deletePostHandler = async () => {
     try {
       const res = await axios.delete(
-        `https://insta-auzq.onrender.com/api/v1/post/delete/${post?._id}`,
+        `${API_URL}/api/v1/post/delete/${post?._id}`,
         {
           withCredentials: true,
         }
@@ -52,7 +53,7 @@ const Post = ({ post }) => {
     try {
       const action = liked ? "dislike" : "like";
       const res = await axios.get(
-        `https://insta-auzq.onrender.com/api/v1/post/${post._id}/${action}`,
+        `${API_URL}/api/v1/post/${post._id}/${action}`,
         { withCredentials: true }
       );
       if (res.data.success) {
@@ -78,7 +79,7 @@ const Post = ({ post }) => {
   const commentHandler = async () => {
     try {
       const res = await axios.post(
-        `https://insta-auzq.onrender.com/api/v1/post/${post._id}/comment`,
+        `${API_URL}/api/v1/post/${post._id}/comment`,
         { text },
         {
           headers: {
@@ -107,7 +108,7 @@ const Post = ({ post }) => {
 
   const bookmarkHandler = async () => {
     try {
-      const res = await axios.get(`https://insta-auzq.onrender.com/api/v1/post/${post._id}/bookmark`, { withCredentials: true });
+      const res = await axios.get(`${API_URL}/api/v1/post/${post._id}/bookmark`, { withCredentials: true });
       if (res.data.success) {
         toast.success(res.data.message);
       }

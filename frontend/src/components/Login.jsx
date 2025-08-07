@@ -26,6 +26,7 @@ const Login = () => {
     const navigate=useNavigate();
     const dispatch=useDispatch();
     const {user}=useSelector(store=>store.auth);
+    const API_URL = import.meta.env.VITE_API_URL;
 
     const signUpHandler = async (e) => {
         e.preventDefault();
@@ -33,7 +34,7 @@ const Login = () => {
         try {
             setLoading(true);
             const res = await axios.post(
-                "https://insta-auzq.onrender.com/api/v1/user/login",
+                `${API_URL}/api/v1/user/login`,
                 input,
                 {
                     headers: {

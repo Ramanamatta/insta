@@ -19,6 +19,7 @@ const CreatePost = ({ open, setOpen }) => {
     const {user}=useSelector(store=>store.auth);
     const {posts}=useSelector(store=>store.post);
     const dispatch=useDispatch();
+    const API_URL = import.meta.env.VITE_API_URL;
     
     const  fileChangeHandler=async(e)=>{
         const file=e.target.files?.[0];
@@ -34,7 +35,7 @@ const CreatePost = ({ open, setOpen }) => {
         if(imagePreview) formData.append("image",file);
         try {
             setLoading(true);
-            const res=await axios.post('https://insta-auzq.onrender.com/api/v1/post/addpost',formData,{
+            const res=await axios.post(`${API_URL}/api/v1/post/addpost`,formData,{
                 headers:{
                     'Content-Type':'mutlipart/form-data'
                 },

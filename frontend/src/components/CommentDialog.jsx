@@ -18,6 +18,7 @@ const CommentDialog = ({ open, setOpen }) => {
   const [comment, setComment] = useState([]);
   const dispatch = useDispatch();
   const [text, setText] = useState("");
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const onChangeEventHandler = (e) => {
     const inpuText = e.target.value;
@@ -37,7 +38,7 @@ const CommentDialog = ({ open, setOpen }) => {
 
   const sendMessageHandler = async () => {
     try {
-      const res = await axios.post(`https://insta-auzq.onrender.com/api/v1/post/${selectedPost?._id}/comment`, { text }, {
+      const res = await axios.post(`${API_URL}/api/v1/post/${selectedPost?._id}/comment`, { text }, {
         headers: {
           'Content-Type': 'application/json'
         },

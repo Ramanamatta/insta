@@ -8,10 +8,12 @@ import { useDispatch, useSelector } from "react-redux";
 const useGetAllMessage = () => {
   const dispatch = useDispatch();
   const { selectedUser } = useSelector((store) => store.auth);
+  const { messages } = useSelector((store) => store.chat);
+  const API_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const fetchAllMessage = async () => {
       try {
-        const res = await axios.get(`https://insta-auzq.onrender.com/api/v1/message/all/${selectedUser?._id}`, {
+        const res = await axios.get(`${API_URL}/api/v1/message/all/${selectedUser?._id}`, {
           withCredentials: true,
         });
         if (res.data.success) {
