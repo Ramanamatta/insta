@@ -13,12 +13,13 @@ dotenv.config({});
 
 const PORT = process.env.PORT || 3000;
 
-const corsOptions = {
- origin: '*',
-    
-  credentials: true,
-};  
-app.use(cors(corsOptions));
+
+app.use(cors({
+  origin: (origin, callback) => {
+    callback(null, origin); // Reflect the request origin
+  },
+  credentials: true,
+}));
 
 
 app.get('/', (req, res) => {
