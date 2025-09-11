@@ -1,12 +1,13 @@
-import { setPosts } from "@/redux/postSlice";
+// hooks/useGetAllPost.js
 import axios from "axios";
-import React from "react";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import usePostStore from "../just/postStore.js"; // import your zustand store
 
 const useGetAllPost = () => {
-  const dispatch = useDispatch();
+  // get the setter directly from zustand
+  const setPosts = usePostStore((state) => state.setPosts);
   const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchAllPost = async () => {
       try {
@@ -14,14 +15,15 @@ const useGetAllPost = () => {
           withCredentials: true,
         });
         if (res.data.success) {
-          dispatch(setPosts(res.data.posts));
+          setPosts(res.data.posts); // direct call, no dispatch needed
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
+
     fetchAllPost();
-  }, []);
+  }, []); // include dependencies
 };
 
 export default useGetAllPost;

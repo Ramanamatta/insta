@@ -6,7 +6,9 @@ import axios from "axios";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-import { useSelector } from "react-redux";
+
+
+import useAuthStore from "../just/authStore.js"; 
 
 
 const Signup = () => {
@@ -25,7 +27,7 @@ const Signup = () => {
 
   const [loading, setLoading] = useState(false);
   const navigate=useNavigate();
-  const {user}=useSelector(store=>store.auth);
+  const user=useAuthStore((state)=>state.user);
   const API_URL = import.meta.env.VITE_API_URL;
 
   const signUpHandler = async (e) => {

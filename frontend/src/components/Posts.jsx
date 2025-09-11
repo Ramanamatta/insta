@@ -1,10 +1,11 @@
 import React from 'react'
 import Post from './Post.jsx'
-import { useSelector } from 'react-redux'
-import store from '@/redux/store.js'
+
+
+import usePostStore from '../just/postStore.js'
 
 const Posts = () => {
-  const {posts}=useSelector(store =>store.post);
+  const posts=usePostStore((state) =>state.posts);
   // console.log(posts);
   return (
     <div>

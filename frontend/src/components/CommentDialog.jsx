@@ -1,58 +1,59 @@
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog.jsx";
-import { Avatar, AvatarFallback,AvatarImage} from "./ui/avatar.jsx";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar.jsx";
 import { Link } from "react-router-dom";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
-import { useDispatch, useSelector } from "react-redux";
-import store from "@/redux/store";
 import Comment from "./Comment.jsx";
 import axios from "axios";
-import { setPosts } from "../redux/postSlice.js";
 import { toast } from "sonner";
 
+// ✅ import Zustand stores
+import usePostStore from "../just/postStore.js";
 
 const CommentDialog = ({ open, setOpen }) => {
+  // pull state + actions from Zustand
+  const { selectedPost, posts, setPosts } = usePostStore();
 
-  const { selectedPost, posts} = useSelector(store => store.post);
   const [comment, setComment] = useState([]);
-  const dispatch = useDispatch();
   const [text, setText] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
 
   const onChangeEventHandler = (e) => {
-    const inpuText = e.target.value;
-    if (inpuText.trim()) {
-      setText(inpuText);
-    }
-    else {
-      setText("");
-    }
-  }
+    const inputText = e.target.value;
+    setText(inputText.trim() ? inputText : "");
+  };
 
-  useEffect(()=>{
+  // whenever selectedPost changes, set local comment state
+  useEffect(() => {
     if(selectedPost?.comments){
       setComment(selectedPost?.comments);
     }
-  },[selectedPost]);
+  }, [selectedPost]);
 
   const sendMessageHandler = async () => {
     try {
-      const res = await axios.post(`${API_URL}/api/v1/post/${selectedPost?._id}/comment`, { text }, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true
-      });
+      const res = await axios.post(
+        `${API_URL}/api/v1/post/${selectedPost?._id}/comment`,
+        { text },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      );
 
       if (res.data.success) {
         const updatedCommentData = [...comment, res.data.comment];
         setComment(updatedCommentData);
 
-        const updatedPostData = posts.map(p =>
+        // update post comments inside Zustand store
+        const updatedPostData = posts.map((p) =>
           p._id === selectedPost._id ? { ...p, comments: updatedCommentData } : p
         );
-        dispatch(setPosts(updatedPostData));
+        setPosts(updatedPostData);
+
         toast.success(res.data.message);
         setText("");
       }
@@ -60,9 +61,6 @@ const CommentDialog = ({ open, setOpen }) => {
       console.log(error);
     }
   }
-
-
-
 
   return (
     <Dialog open={open}>
@@ -79,6 +77,7 @@ const CommentDialog = ({ open, setOpen }) => {
             />
           </div>
           <div className="w-1/2 flex flex-col justify-between">
+            {/* header */}
             <div className="flex items-center justify-between p-4">
               <div className="flex gap-3 items-center">
                 <Link>
@@ -106,18 +105,32 @@ const CommentDialog = ({ open, setOpen }) => {
               </Dialog>
             </div>
             <hr />
+
+            {/* comments list */}
             <div className="flex-1 overflow-y-auto max-h-96 p-4">
-              {
-                comment.map((comment) => <Comment key={comment._id} comment={comment} />)
-              }
-          
+              {comment.map((c) => (
+                <Comment key={c._id} comment={c} />
+              ))}
             </div>
+
+            {/* add comment */}
             <div className="p-4">
               <div className="flex items-center gap-2">
-                <input value={text} type="text" onChange={onChangeEventHandler} placeholder="Add a comment" className="w-full outline-none border border-gray-300 p-2 rounded" />
-                <Button disabled={!text.trim()} onClick={sendMessageHandler}  variant="outline">Send</Button>
+                <input
+                  value={text}
+                  type="text"
+                  onChange={onChangeEventHandler}
+                  placeholder="Add a comment"
+                  className="w-full outline-none border border-gray-300 p-2 rounded"
+                />
+                <Button
+                  disabled={!text.trim()}
+                  onClick={sendMessageHandler}
+                  variant="outline"
+                >
+                  Send
+                </Button>
               </div>
-
             </div>
           </div>
         </div>

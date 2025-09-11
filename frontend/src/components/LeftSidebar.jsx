@@ -12,18 +12,28 @@ import {
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setAuthUser } from "@/redux/authSlice.js";
+
 import CreatePost from "./CreatePost.jsx";
-import { setPosts, setSelectedPost } from "@/redux/postSlice.js";
+
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover.jsx";
 import { Button } from "./ui/button.jsx";
 
+import useAuthStore from "../just/authStore.js";
+import usePostStore from "../just/postStore.js";
+import useRtnStore from "../just/rtnStore.js";    
+
+
 const LeftSidebar = () => {
   const navigate = useNavigate();
-  const { user } = useSelector(store => store.auth)
-  const { likeNotifications } = useSelector(store => store.realTimeNotifications);
-  const dispatch = useDispatch();
+
+const user = useAuthStore((state) => state.user);
+const setAuthUser = useAuthStore((state) => state.setAuthUser);
+const setPosts = usePostStore((state) => state.setPosts);
+const setSelectedPost = usePostStore((state) => state.setSelectedPost);
+const likeNotifications = useRtnStore((state) => state.likeNotifications);
+
+
+
   const [open, setOpen] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -54,9 +64,9 @@ const LeftSidebar = () => {
     try {
       const res = await axios.get(`${API_URL}/api/v1/user/logout`, { withCredentials: true });
       if (res.data.success) {
-        dispatch(setAuthUser(null));
-        dispatch(setSelectedPost(null));
-        dispatch(setPosts([]));
+        setAuthUser(null);
+        setSelectedPost(null);
+        setPosts([]);
         navigate('/login')
         toast.success(res.data.message)
       }

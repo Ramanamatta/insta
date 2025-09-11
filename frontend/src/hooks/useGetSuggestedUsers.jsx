@@ -1,12 +1,14 @@
-import { setSuggestedUsers } from "@/redux/authSlice";
+// hooks/useGetSuggestedUsers.js
 import axios from "axios";
-import React from "react";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import useAuthStore from "../just/authStore.js"; // adjust the path as necessary
 
 const useGetSuggestedUsers = () => {
-  const dispatch = useDispatch();
   const API_URL = import.meta.env.VITE_API_URL;
+
+  // get the setter directly from Zustand store
+  const setSuggestedUsers = useAuthStore((state) => state.setSuggestedUsers);
+
   useEffect(() => {
     const fetchSuggestedUsers = async () => {
       try {
@@ -14,12 +16,12 @@ const useGetSuggestedUsers = () => {
           withCredentials: true,
         });
         if (res.data.success) {
-          dispatch(setSuggestedUsers(res.data.users));
+          setSuggestedUsers(res.data.users);
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
-    }
+    };
     fetchSuggestedUsers();
   }, []);
 };

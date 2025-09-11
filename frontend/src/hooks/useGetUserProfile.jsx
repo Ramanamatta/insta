@@ -1,12 +1,14 @@
-import { setUserProfile } from "@/redux/authSlice";
+// hooks/useGetUserProfile.js
 import axios from "axios";
-import React from "react";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import useAuthStore from "../just/authStore.js"; // adjust the path as necessary
 
 const useGetUserProfile = (userId) => {
-  const dispatch = useDispatch();
   const API_URL = import.meta.env.VITE_API_URL;
+
+  // get Zustand setter directly
+  const setUserProfile = useAuthStore((state) => state.setUserProfile);
+
   useEffect(() => {
     const fetchUserProfile = async () => {
 
@@ -15,14 +17,14 @@ const useGetUserProfile = (userId) => {
           withCredentials: true,
         });
         if (res.data.success) {
-          dispatch(setUserProfile(res.data.user));
+          setUserProfile(res.data.user);
         }
       } catch (error) {
         console.log(error);
       }
     }
     fetchUserProfile();
-  }, [userId]);
+  }, [ userId]);
 };
 
 export default useGetUserProfile;

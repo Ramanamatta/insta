@@ -1,14 +1,18 @@
-import { setMessages } from "@/redux/chatSlice";
-import { setPosts } from "@/redux/postSlice";
+
 import axios from "axios";
-import React from "react";
+
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+
+import useAuthStore from "../just/authStore.js";
+import useChatStore from "../just/chatStore.js";
+
+
 
 const useGetAllMessage = () => {
-  const dispatch = useDispatch();
-  const { selectedUser } = useSelector((store) => store.auth);
-  const { messages } = useSelector((store) => store.chat);
+
+  const  selectedUser  = useAuthStore((state) => state.selectedUser);
+  const setMessages  = useChatStore((state) => state.setMessages);
+
   const API_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const fetchAllMessage = async () => {
@@ -17,7 +21,7 @@ const useGetAllMessage = () => {
           withCredentials: true,
         });
         if (res.data.success) {
-          dispatch(setMessages(res.data.messages));
+          setMessages(res.data.messages);
         }
       } catch (error) {
         console.log(error);

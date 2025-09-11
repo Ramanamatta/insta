@@ -1,19 +1,24 @@
 import React, { useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar.jsx";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+
 import { Button } from "./ui/button.jsx";
 import { Textarea } from "./ui/textarea.jsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select.jsx";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { setAuthUser } from "@/redux/authSlice";
+
+
+import useAuthStore from "../just/authStore.js";
 
 const EditProfile = () => {
   const immageRef = useRef();
   const [loading,setLoading]=useState(false);
-  const { user } = useSelector((store) => store.auth);
+
+  const user = useAuthStore((state) => state.user);
+  const setAuthUser = useAuthStore((state) => state.setAuthUser);
+
   const API_URL = import.meta.env.VITE_API_URL;
   const [input,setInput]=useState({
     profilePhoto:user?.profilePicture,
@@ -21,7 +26,6 @@ const EditProfile = () => {
     gender:user?.gender
   });
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const fileChangeHandler = (e) => {
     const file=e.target.files?.[0];
     if(file){
@@ -62,7 +66,7 @@ const EditProfile = () => {
         profilePicture: res.data.user?.profilePicture,
         gender: res.data.user?.gender
       };
-      dispatch(setAuthUser(updateUserData));
+      setAuthUser(updateUserData);
       navigate(`/profile/${user?._id}`);
       toast.success(res.data.message);
     }

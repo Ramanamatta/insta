@@ -9,14 +9,14 @@ import Profile from './components/Profile.jsx'
 import EditProfile from './components/EditProfile.jsx'
 import ChatPage from './components/ChatPage.jsx'
 import {io} from 'socket.io-client';
-import { useDispatch, useSelector } from 'react-redux'
 import { use, useEffect } from 'react'
-import { setSocket } from './redux/socketSlice.js'
-import { setOnlineUsers } from './redux/chatSlice.js'
-import { SelectTrigger } from '@radix-ui/react-select'
-import { setLikeNotifications } from './redux/rtnSlice.js'
+
 import ProtectedRoutes from './components/ProtectedRoutes.jsx'
 
+import useAuthStore from "./just/authStore.js"
+import useSocketStore  from "./just/socketStore.js"
+import useChatStore  from './just/chatStore.js';
+import useRtnStore from './just/rtnStore.js';
 
 const browserRouter=createBrowserRouter(
   [
@@ -55,9 +55,13 @@ const browserRouter=createBrowserRouter(
   ]
 )
 function App() {
-  const {user}=useSelector((store)=>store.auth);
-  const {socket}=useSelector((store)=>store.socketio);
-  const dispatch=useDispatch();
+  const user=useAuthStore((state)=>state.user);
+  const socket=useSocketStore((state)=>state.socket);
+  const setSocket=useSocketStore((state)=>state.setSocket);
+  const setOnlineUsers=useChatStore((state)=>state.setOnlineUsers);
+  const setLikeNotifications=useRtnStore((state)=>state.setLikeNotifications);
+
+
   useEffect(()=>{
     if(user)
     {
@@ -67,30 +71,30 @@ function App() {
         },
         transports:['websocket']
       })
-      dispatch(setSocket(socketio));
+      setSocket(socketio);
 
       //listen all the online users
       socketio.on('getOnlineUsers',(onlineUsers)=>{
-        dispatch(setOnlineUsers(onlineUsers));
+        setOnlineUsers(onlineUsers);
       });
 
       //lisen for notification
  
       socketio.on('notification',(notification)=>{
-        dispatch(setLikeNotifications(notification));
+        setLikeNotifications(notification);
       })
 
       return ()=>{
         socketio.close();
-        dispatch(setSocket(null));
+        setSocket(null);
 
       }
     }
     else if(socket){
       socket?.close();
-      dispatch(setSocket(null));
+      setSocket(null);
     }
-  },[user,dispatch])
+  },[user,setSocket,setOnlineUsers,setLikeNotifications])
 
   return (
     <>

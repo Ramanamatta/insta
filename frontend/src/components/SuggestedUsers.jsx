@@ -1,11 +1,13 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Link } from "react-router-dom";
-import store from "@/redux/store";
+
+
+import useAuthStore from "../just/authStore.js";
+
 
 const SuggestedUsers = () => {
-  const { suggestedUsers } = useSelector((store) => store.auth);
+  const  suggestedUsers  = useAuthStore((state) => state.suggestedUsers);
   return (
     <div className="my-10">
       <div className="flex items-center justify-between text-sm">
@@ -14,7 +16,7 @@ const SuggestedUsers = () => {
       </div>
       {suggestedUsers?.map((user) => {
         return (
-          <div className=" flex items-center justify-between my-5">
+          <div key={user?._id} className=" flex items-center justify-between my-5">
             <div className="flex items-center gap-2">
               <Link to={`/profile/${user?._id}`}>
                 <Avatar>

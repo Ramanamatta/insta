@@ -1,13 +1,14 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar.jsx";
-import { useSelector } from "react-redux";
-import store from "@/redux/store";
+
+
 import { Link } from "react-router-dom";
-import SuggestedUser from "./SuggestedUsers";
 import SuggestedUsers from "./SuggestedUsers";
 
+import useAuthStore from "../just/authStore.js";
+
 const RightSidebar = () => {
-  const { user } = useSelector((store) => store.auth);
+  const  user  = useAuthStore((state) => state.user);
   return (
     <div className="w-fit my-10 pr-32">
       <div className="flex items-center gap-2">
@@ -17,7 +18,6 @@ const RightSidebar = () => {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </Link>
-
         <div>
           <h1 className="font-semibold text-sm">
             <Link to={`/profile/${user?._id}`}>{user?.name}</Link>

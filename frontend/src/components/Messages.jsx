@@ -6,11 +6,14 @@ import { useSelector } from 'react-redux'
 import useGetAllMessage from '@/hooks/useGetAllMessage'
 import useGetRTM from '@/hooks/useGetRTM'
 
+import useChatStore from '../just/chatStore.js'  
+import useAuthStore  from '../just/authStore.js'
+
 const Messages = ({ selectedUser }) => {
     useGetRTM();
     useGetAllMessage();
-    const {messages} = useSelector(store=>store.chat);
-    const {user} = useSelector(store=>store.auth);
+    const messages = useChatStore(store=>store.messages);
+    const user = useAuthStore(store=>store.user);
     return (    
         <div className='overflow-y-auto flex-1 p-4'>
             <div className='flex justify-center'>

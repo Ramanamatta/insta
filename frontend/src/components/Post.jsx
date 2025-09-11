@@ -5,19 +5,24 @@ import { Bookmark, MessageCircle, MoreHorizontal, Send } from "lucide-react";
 import { Button } from "./ui/button.jsx";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import CommentDialog from "./CommentDialog";
-import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios";
-import { setPosts, setSelectedPost } from "@/redux/postSlice";
+
 import { Badge } from '../components/ui/badge.jsx'
+
+import useAuthStore from "../just/authStore.js";
+import usePostStore from "../just/postStore.js";  
+
 
 const Post = ({ post }) => {
   const [text, setText] = useState("");
   const [open, setOpen] = useState(false);
-  const { user } = useSelector((store) => store.auth);
-  const { posts } = useSelector((store) => store.post);
+  const  user  = useAuthStore((state) => state.user);
+  const  posts  = usePostStore((state) => state.posts);
+  const setPosts = usePostStore((state) => state.setPosts);
+  const setSelectedPost = usePostStore((state) => state.setSelectedPost);
+
   const [comment, setComment] = useState(post.comments);
-  const dispatch = useDispatch();
   const API_URL = import.meta.env.VITE_API_URL;
 
   // Derived liked state (not useState)
@@ -40,7 +45,7 @@ const Post = ({ post }) => {
         const updatedData = posts.filter(
           (postItem) => postItem?._id !== post?._id
         );
-        dispatch(setPosts(updatedData));
+        setPosts(updatedData);
         toast.success(res.data.message);
       }
     } catch (error) {
@@ -67,7 +72,7 @@ const Post = ({ post }) => {
             }
             : p
         );
-        dispatch(setPosts(updatedPosts));
+        setPosts(updatedPosts);
         toast.success(res.data.message);
       }
     } catch (error) {
@@ -97,7 +102,7 @@ const Post = ({ post }) => {
           p._id === post._id ? { ...p, comments: updatedCommentData } : p
         );
 
-        dispatch(setPosts(updatedPostData));
+        setPosts(updatedPostData);
         toast.success(res.data.message);
         setText("");
       }

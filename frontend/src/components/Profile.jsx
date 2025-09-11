@@ -7,13 +7,22 @@ import { Button } from './ui/button.jsx';
 import { Badge } from './ui/badge.jsx';
 import { AtSign, Heart, MessageCircle } from 'lucide-react';
 
+import useAuthStore from '../just/authStore.js'
+import usePostStore from '../just/postStore.js'
+
+
+
 const Profile = () => {
   const params = useParams();
   const userId = params.id;
   useGetUserProfile(userId);
   const [activeTab, setActiveTab] = useState('posts');
 
-  const { userProfile, user } = useSelector(store => store.auth);
+  const user  = useAuthStore((state) => state.user);
+  const userProfile = useAuthStore((state) => state.userProfile); 
+ 
+
+  
 
   const isLoggedInUserProfile = user?._id === userProfile?._id;
   const isFollowing = false;
