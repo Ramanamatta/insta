@@ -1,10 +1,12 @@
 import sharp from "sharp";
 import cloudinary from "../utils/cloudinary.js";
 import { Post } from "../models/post.model.js";
+import { Reel } from "../models/reel.model.js";
 import { User } from "./../models/user.model.js";
 import { Comment } from "../models/coment.model.js";
 import { getReceiverSocketId } from "../socket/socket.js";
 import { io } from "../socket/socket.js";
+import { Product } from "../models/product.model.js"; 
 
 export const addnNewPost = async (req, res) => {
   try {
@@ -46,6 +48,137 @@ export const addnNewPost = async (req, res) => {
       .json({ message: "Post created successfully", post, success: true });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const addNewProduct = async (req, res) => {
+  try {
+    const { name, description, price, category, stock } = req.body;
+    const sellerId = req.id; // from auth middleware
+    const image = req.file;
+
+    if (!image) {
+      return res
+        .status(400)
+        .json({ message: "Product image required", success: false });
+    }
+
+    // resize image like post controller
+    const optimizedImageBuffer = await sharp(image.buffer)
+      .resize({ width: 800, height: 800, fit: "inside" })
+      .toFormat("jpeg", { quality: 80 })
+      .toBuffer();
+
+    const fileUri = `data:image/jpeg;base64,${optimizedImageBuffer.toString(
+      "base64"
+    )}`;
+
+    const cloudResponse = await cloudinary.uploader.upload(fileUri);
+
+    // create product
+    const product = await Product.create({
+      name,
+      description,
+      price,
+      category,
+      stock,
+      image: cloudResponse.secure_url,
+      seller: sellerId,
+    });
+
+    // push to user products array (optional)
+    const user = await User.findById(sellerId);
+    if (user) {
+      user.products.push(product._id);
+      await user.save();
+    }
+
+    await product.populate({ path: "seller", select: "-password" });
+
+    return res
+      .status(201)
+      .json({ message: "Product added successfully", product, success: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error", success: false });
+  }
+};
+
+
+export const addNewReel = async (req, res) => {
+  try {
+    const { caption } = req.body;
+    const authorId = req.id;
+    const video = req.file;
+
+    if (!video) {
+      return res.status(400).json({ message: "Video required", success: false });
+    }
+
+    // Upload the video to Cloudinary (resource_type must be video)
+    const cloudResponse = await cloudinary.uploader.upload(video.path || `data:video/mp4;base64,${video.buffer.toString("base64")}`, {
+      resource_type: "video",
+      // folder: "reels", // optional folder name
+    });
+
+    // generate a thumbnail (Cloudinary auto-generates poster images)
+    const thumbnailUrl = cloudinary.url(cloudResponse.public_id + ".jpg", {
+      resource_type: "video",
+      start_offset: "1", // take frame at 1s
+    });
+
+    // Save reel in DB
+    const reel = await Reel.create({
+      caption,
+      videoUrl: cloudResponse.secure_url,
+      thumbnailUrl,
+      author: authorId,
+    });
+
+    // Push reel reference to user
+    const user = await User.findById(authorId);
+    if (user) {
+      user.reels.push(reel._id);
+      await user.save();
+    }
+
+    await reel.populate({ path: "author", select: "-password" });
+
+    return res
+      .status(201)
+      .json({ message: "Reel created successfully", reel, success: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong", success: false });
+  }
+};
+
+export const getAllProducts = async (req, res) => {
+  try {
+    // fetch all products newest first
+    const products = await Product.find()
+      .sort({ createdAt: -1 }) // make sure your schema has timestamps:true
+      .populate({
+        path: "seller",
+        select: "name profilePicture email" // fields you want to show
+      });
+
+    return res.status(200).json({ products, success: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error", success: false });
+  }
+};
+
+export const getAllReels = async (req, res) => {
+  try {
+    const reels = await Reel.find()
+      .populate({ path: "author", select: "-password" })
+      .sort({ createdAt: -1 }); // newest first
+    return res.status(200).json({ reels, success: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Failed to fetch reels", success: false });
   }
 };
 
@@ -264,4 +397,4 @@ export const bookmarkPost = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-}
+} 

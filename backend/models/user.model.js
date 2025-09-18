@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
@@ -11,6 +10,8 @@ const userSchema = new mongoose.Schema({
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],  
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+    products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+    reels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reel" }],
     bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }], 
 },{timestamp: true});
 export const User = mongoose.model('User', userSchema);

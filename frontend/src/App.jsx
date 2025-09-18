@@ -17,6 +17,10 @@ import useAuthStore from "./just/authStore.js"
 import useSocketStore  from "./just/socketStore.js"
 import useChatStore  from './just/chatStore.js';
 import useRtnStore from './just/rtnStore.js';
+import ReelsPage from './components/ReelsPage.jsx'
+import ProductPage from './components/ProductPage.jsx'
+import GetALLProductPage from './components/AlllProductPage.jsx'
+import OrdersPage from './components/OrdersPage.jsx'
 
 const browserRouter=createBrowserRouter(
   [
@@ -40,6 +44,22 @@ const browserRouter=createBrowserRouter(
         {
           path:'/chat',
           element:<ProtectedRoutes><ChatPage/></ProtectedRoutes> 
+        },
+        {
+          path:'/reels',
+          element:<ProtectedRoutes><ReelsPage/></ProtectedRoutes>  
+        },
+        {
+          path:'/products',
+          element:<ProtectedRoutes><ProductPage/></ProtectedRoutes>
+        },
+        {
+          path:'/all-products',
+          element:<ProtectedRoutes><GetALLProductPage/></ProtectedRoutes> 
+        },
+        {
+          path:'/orders',
+          element:<ProtectedRoutes><OrdersPage/></ProtectedRoutes>
         }
       ]
     },
