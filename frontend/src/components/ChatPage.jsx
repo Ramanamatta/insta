@@ -48,33 +48,39 @@ const ChatPage = () => {
   }, []);
 
   return (
-    <div className="flex ml-[16%] h-screen">
-      {/* Left sidebar */}
-      <section className="w-ful md:w-1/4 my-8">
-        <h1 className="font-bold mb-4 px-3 text-xl">{user?.name}</h1>
-        <hr className="mb-4 border-gray-300" />
-        <div className="overflow-y-auto h-[80vh]">
+    <div className="flex h-screen pt-16 lg:pt-0 bg-white">
+      {/* Left sidebar - Users List */}
+      <section className={`${
+        selectedUser ? 'hidden lg:flex' : 'flex'
+      } flex-col w-full lg:w-80 border-r border-gray-200`}>
+        <div className="p-4 border-b border-gray-200">
+          <h1 className="font-bold text-xl">{user?.name}</h1>
+        </div>
+        <div className="flex-1 overflow-y-auto">
           {suggestedUsers.map((suggestedUser) => {
             const isOnline = onlineUsers.includes(suggestedUser._id);
             return (
               <div
                 key={suggestedUser._id}
                 onClick={() => setSelectedUser(suggestedUser)}
-                className="flex gap-3 items-center p-3 hover:bg-gray-50 cursor-pointer"
+                className="flex gap-3 items-center p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100"
               >
-                <Avatar className="w-14 h-14">
-                  <AvatarImage src={suggestedUser?.profilePicture} />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col">
-                  <span className="font-medium">{suggestedUser?.name}</span>
-                  <span
-                    className={`text-xs font-bold ${
-                      isOnline ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {isOnline ? "online" : "offline"}
-                  </span>
+                <div className="relative">
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage src={suggestedUser?.profilePicture} />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  {isOnline && (
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm truncate">{suggestedUser?.name}</p>
+                  <p className={`text-xs ${
+                    isOnline ? "text-green-600" : "text-red-600"
+                  }`}>
+                    {isOnline ? "Online" : "Offline"}
+                  </p>
                 </div>
               </div>
             );
@@ -82,39 +88,60 @@ const ChatPage = () => {
         </div>
       </section>
 
-      {/* Right section */}
+      {/* Right section - Chat */}
       {selectedUser ? (
-        <section className="flex-1 border-l border-gray-300 flex flex-col h-full">
-          <div className="flex gap-3 items-center px-3 py-2 border-b border-gray-300 sticky top-0 bg-white z-10">
-            <Avatar>
+        <section className="flex-1 flex flex-col h-full">
+          {/* Chat Header */}
+          <div className="flex items-center gap-3 p-4 border-b border-gray-200 bg-white">
+            <button 
+              onClick={() => setSelectedUser(null)}
+              className="lg:hidden p-2 hover:bg-gray-100 rounded-full"
+            >
+              ←
+            </button>
+            <Avatar className="w-10 h-10">
               <AvatarImage src={selectedUser?.profilePicture} alt="profile" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
-            <div className="flex flex-col">
-              <span>{selectedUser?.name}</span>
+            <div>
+              <h2 className="font-semibold text-sm">{selectedUser?.name}</h2>
+              <p className="text-xs text-gray-500">Active now</p>
             </div>
           </div>
 
-          <Messages selectedUser={selectedUser} />
+          {/* Messages */}
+          <div className="flex-1 overflow-hidden">
+            <Messages selectedUser={selectedUser} />
+          </div>
 
-          <div className="flex items-center p-4 border-t border-t-gray-300">
+          {/* Message Input */}
+          <div className="flex items-center gap-2 p-4 border-t border-gray-200 bg-white">
             <Input
               value={text}
               onChange={(e) => setText(e.target.value)}
               type="text"
-              className="flex-1 mr-2 focus-visible:ring-transparent"
-              placeholder="Messages"
+              className="flex-1 focus-visible:ring-transparent"
+              placeholder="Message..."
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && text.trim()) {
+                  sendMessageHandler(selectedUser?._id);
+                }
+              }}
             />
-            <Button onClick={() => sendMessageHandler(selectedUser?._id)}>
+            <Button 
+              onClick={() => sendMessageHandler(selectedUser?._id)}
+              disabled={!text.trim()}
+              size="sm"
+            >
               Send
             </Button>
           </div>
         </section>
       ) : (
-        <div className="flex flex-col items-center justify-center mx-auto">
-          <MessageCircleCode className="w-32 h-32 my-4" />
-          <h1 className="font-medium">Your messages</h1>
-          <span>send a message to start a conversation</span>
+        <div className="hidden lg:flex flex-1 flex-col items-center justify-center bg-gray-50">
+          <MessageCircleCode className="w-24 h-24 text-gray-400 mb-4" />
+          <h1 className="font-semibold text-xl mb-2">Your Messages</h1>
+          <p className="text-gray-500 text-center">Send private messages to a friend or group</p>
         </div>
       )}
     </div>

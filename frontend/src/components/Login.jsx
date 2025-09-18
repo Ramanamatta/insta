@@ -70,10 +70,10 @@ const Login = () => {
         }
     })
     return (
-        <div className="flex items-center w-screen h-screen justify-center">
+        <div className="flex items-center min-h-screen justify-center bg-gray-50 px-4">
             <form
                 onSubmit={signUpHandler}
-                className="shadow-lg flex flex-col gap-5 p-8"
+                className="bg-white shadow-lg rounded-lg flex flex-col gap-5 p-6 lg:p-8 w-full max-w-md"
             >
                 <div className="my-4">
                     <h1 className="text-center font-bold text-xl">LOGO</h1>

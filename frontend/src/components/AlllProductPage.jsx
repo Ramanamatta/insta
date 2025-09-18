@@ -5,9 +5,12 @@ import { Button } from "./ui/button";
 import { ShoppingCart } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
+import RightSidebar from './RightSidebar';
+import useGetSuggestedUsers from '@/hooks/useGetSuggestedUsers';
 
 const AddProductPage = () => {
   useGetAllProducts();
+  useGetSuggestedUsers();
   const products = useProductStore((state) => state.products);
 
   const cardRefs = useRef([]); // hold refs to product cards
@@ -87,36 +90,47 @@ const AddProductPage = () => {
   };
 
   return (
-    <div className="ml-[16%] p-8 min-h-screen bg-gray-50">
-      <h2 className="text-xl font-bold mb-6 flex justify-center sticky top-0 bg-white z-10">
-        Products
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-        {products?.map((product) => (
-          <div
-            key={product?._id}
-            className="bg-white shadow-lg rounded-xl p-4 flex flex-col items-center"
-          >
-            <img
-              src={product?.image}
-              alt={product?.name}
-              className="h-48 w-full object-cover rounded-md"
-            />
-            <h3 className="text-lg font-bold mt-2">{product?.name}</h3>
-            <p className="text-sm text-gray-600">{product?.description}</p>
-            <p className="text-blue-600 font-semibold mt-1">₹{product?.price}</p>
-            <p className="text-xs text-gray-400">Category: {product?.category}</p>
-            <p className="text-xs text-gray-400">Stock: {product?.stock}</p>
-            <Button className="mt-3 bg-[#0095F6] hover:bg-[#258bcf] w-full flex items-center justify-center gap-2 text-sm py-2 cursor-pointer" 
-              onClick={() => handlePayment(product)}
-            >
-            
-              
-              Pay
-            </Button>
+    <div className='flex min-h-screen pt-16 lg:pt-0'>
+      <div className='flex-1 max-w-full lg:max-w-4xl mx-auto'>
+        <div className="min-h-screen bg-gray-50">
+          <div className="px-4 lg:px-8 py-4 lg:py-8">
+            <h2 className="text-2xl font-bold mb-6 text-center sticky top-16 lg:top-0 bg-gray-50 py-4 z-10">
+              Products
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+              {products?.map((product) => (
+                <div
+                  key={product?._id}
+                  className="bg-white shadow-md hover:shadow-lg transition-shadow rounded-lg overflow-hidden"
+                >
+                  <img
+                    src={product?.image}
+                    alt={product?.name}
+                    className="h-48 w-full object-cover"
+                  />
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold mb-2 line-clamp-1">{product?.name}</h3>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product?.description}</p>
+                    <div className="space-y-1 mb-4">
+                      <p className="text-xl font-bold text-blue-600">₹{product?.price}</p>
+                      <p className="text-xs text-gray-500">Category: {product?.category}</p>
+                      <p className="text-xs text-gray-500">Stock: {product?.stock}</p>
+                    </div>
+                    <Button 
+                      className="w-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center gap-2" 
+                      onClick={() => handlePayment(product)}
+                    >
+                      <ShoppingCart size={16} />
+                      Buy Now
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
+        </div>
       </div>
+      <RightSidebar/>
     </div>
   );
 };

@@ -28,7 +28,7 @@ import useAuthStore from "../just/authStore.js";
 import usePostStore from "../just/postStore.js";
 import useRtnStore from "../just/rtnStore.js";
 
-const LeftSidebar = () => {
+const LeftSidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const navigate = useNavigate();
 
   const user = useAuthStore((state) => state.user);
@@ -38,8 +38,8 @@ const LeftSidebar = () => {
   const likeNotifications = useRtnStore((state) => state.likeNotifications);
 
   const [openPost, setOpenPost] = useState(false);
-  const [openReel, setOpenReel] = useState(false); // ⬅️ state for reel modal
-  const [openProduct, setOpenProduct] = useState(false); // state for product modal 
+  const [openReel, setOpenReel] = useState(false);
+  const [openProduct, setOpenProduct] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
 
   const sidebarItems = [
@@ -83,6 +83,9 @@ const LeftSidebar = () => {
   };
 
   const sidebarHandler = async (textType) => {
+    // Close mobile menu when navigating
+    setIsMobileMenuOpen(false);
+    
     if (textType === "Logout") {
       logoutHandler();
     } else if (textType === "Create Post") {
@@ -111,81 +114,157 @@ const LeftSidebar = () => {
     else if (textType === "My Orders") {
       navigate('/orders');
     }
-
   };
 
   return (
-    <div className="fixed top-0 z-10 left-0 px-4 border-r border-gray-300 w-[16%] h-screen">
-      <div className="flex flex-col h-full">
-        <h1 className="my-8 pl-3 font-bold text-xl">Logo</h1>
-        <div className="flex-1 overflow-y-auto scrollbar-hide">
-          {sidebarItems.map((item, index) => {
-            return (
-              <div
-                onClick={() => {
-                  sidebarHandler(item.text);
-                }}
-                key={index}
-                className="flex items-center gap-3 relative hover:bg-gray-100 cursor-pointer rounded-lg p-3 my-3"
-              >
-                {item.icon}
-
-                <span>{item.text}</span>
-                {item.text === "Notifications" && likeNotifications.length > 0 && (
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        size="icon"
-                        className="rounded-full h-5 w-5 bg-red-600 hover:bg-red-600 absolute bottom-6 left-6 cursor-pointer"
-                      >
-                        {likeNotifications.length}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <div>
-                        {likeNotifications.length === 0 ? (
-                          <p>No new notification</p>
-                        ) : (
-                          likeNotifications.map((notification) => {
-                            return (
-                              <div
-                                key={notification.userId}
-                                className="flex items-center gap-2 my-2"
-                              >
-                                <Avatar>
-                                  <AvatarImage
-                                    src={notification.userDetails?.profilePicture}
-                                  />
-                                  <AvatarFallback>CN</AvatarFallback>
-                                </Avatar>
-                                <p className="text-sm">
-                                  <span className="font-bold">
-                                    {notification.userDetails?.name}
-                                  </span>{" "}
-                                  liked your post
-                                </p>
-                              </div>
-                            );
-                          })
-                        )}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                )}
-              </div>
-            );
-          })}
+    <>
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block fixed top-0 left-0 z-30 w-64 h-screen bg-white border-r border-gray-200">
+        <div className="flex flex-col h-full px-4">
+          <h1 className="my-8 pl-3 font-bold text-xl">Logo</h1>
+          <div className="flex-1 overflow-y-auto scrollbar-hide">
+            {sidebarItems.map((item, index) => {
+              return (
+                <div
+                  onClick={() => {
+                    sidebarHandler(item.text);
+                  }}
+                  key={index}
+                  className="flex items-center gap-3 relative hover:bg-gray-100 cursor-pointer rounded-lg p-3 my-3"
+                >
+                  {item.icon}
+                  <span>{item.text}</span>
+                  {item.text === "Notifications" && likeNotifications.length > 0 && (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          size="icon"
+                          className="rounded-full h-5 w-5 bg-red-600 hover:bg-red-600 absolute bottom-6 left-6 cursor-pointer"
+                        >
+                          {likeNotifications.length}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <div>
+                          {likeNotifications.length === 0 ? (
+                            <p>No new notification</p>
+                          ) : (
+                            likeNotifications.map((notification) => {
+                              return (
+                                <div
+                                  key={notification.userId}
+                                  className="flex items-center gap-2 my-2"
+                                >
+                                  <Avatar>
+                                    <AvatarImage
+                                      src={notification.userDetails?.profilePicture}
+                                    />
+                                    <AvatarFallback>CN</AvatarFallback>
+                                  </Avatar>
+                                  <p className="text-sm">
+                                    <span className="font-bold">
+                                      {notification.userDetails?.name}
+                                    </span>{" "}
+                                    liked your post
+                                  </p>
+                                </div>
+                              );
+                            })
+                          )}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
-      <div>
-        {/* Create Post modal */}
-        <CreatePost open={openPost} setOpen={setOpenPost} />
-        {/* Create Reel modal */}
-        <CreateReel open={openReel} setOpen={setOpenReel} />
-        {/* Add Product modal */}
-        <AddProduct open={openProduct} setOpen={setOpenProduct} />  
-      </div>
-    </div>
+
+      {/* Mobile Hamburger Menu */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setIsMobileMenuOpen(false)}>
+          <div className="fixed top-0 left-0 w-80 h-full bg-white shadow-lg" onClick={(e) => e.stopPropagation()}>
+            <div className="flex flex-col h-full px-4">
+              <div className="flex items-center justify-between py-4 border-b border-gray-200">
+                <h1 className="font-bold text-xl">Menu</h1>
+                <button 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto scrollbar-hide py-4">
+                {sidebarItems.filter(item => 
+                  !['Home', 'Products', 'Create Post', 'Reels', 'Profile'].includes(item.text)
+                ).map((item, index) => {
+                  return (
+                    <div
+                      onClick={() => {
+                        sidebarHandler(item.text);
+                      }}
+                      key={index}
+                      className="flex items-center gap-3 relative hover:bg-gray-100 cursor-pointer rounded-lg p-3 my-2"
+                    >
+                      {item.icon}
+                      <span>{item.text}</span>
+                      {item.text === "Notifications" && likeNotifications.length > 0 && (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              size="icon"
+                              className="rounded-full h-5 w-5 bg-red-600 hover:bg-red-600 absolute bottom-6 left-6 cursor-pointer"
+                            >
+                              {likeNotifications.length}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent>
+                            <div>
+                              {likeNotifications.length === 0 ? (
+                                <p>No new notification</p>
+                              ) : (
+                                likeNotifications.map((notification) => {
+                                  return (
+                                    <div
+                                      key={notification.userId}
+                                      className="flex items-center gap-2 my-2"
+                                    >
+                                      <Avatar>
+                                        <AvatarImage
+                                          src={notification.userDetails?.profilePicture}
+                                        />
+                                        <AvatarFallback>CN</AvatarFallback>
+                                      </Avatar>
+                                      <p className="text-sm">
+                                        <span className="font-bold">
+                                          {notification.userDetails?.name}
+                                        </span>{" "}
+                                        liked your post
+                                      </p>
+                                    </div>
+                                  );
+                                })
+                              )}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Modals */}
+      <CreatePost open={openPost} setOpen={setOpenPost} />
+      <CreateReel open={openReel} setOpen={setOpenReel} />
+      <AddProduct open={openProduct} setOpen={setOpenProduct} />
+    </>
   );
 };
 
