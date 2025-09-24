@@ -13,7 +13,7 @@ import {app,server} from './socket/socket.js';
 // Load environment variables
 dotenv.config({});
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 
 
 app.use(cors({
@@ -46,7 +46,7 @@ app.use("/api/v1/message", messageRoute);
 app.use("/api/v1/payment", paymentRoute);
 app.use("/api/v1/order", orderRoute);
  
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0',() => {
     connectDB()
   console.log(`Server is running on port ${PORT}`);
 }); 
