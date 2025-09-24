@@ -85,7 +85,7 @@ function App() {
   useEffect(()=>{
     if(user)
     {
-      const socketio=io('https://insta-auzq.onrender.com',{
+      const socketio=io(import.meta.env.VITE_API_URL,{
         query:{
           userId:user?._id,
         },
