@@ -29,25 +29,6 @@ The frontend is deployed on Vercel with automatic deployments from the main bran
 ### Backend (Render)
 The backend is deployed on Render with environment variables configured.
 
-## Environment Variables
-
-### Backend
-```
-PORT=8000
-MONGO_URI=your_mongodb_connection_string
-SECRET_KEY=your_jwt_secret
-API_KEY=cloudinary_api_key
-API_SECRET=cloudinary_api_secret
-CLOUD_NAME=cloudinary_cloud_name
-FRONTEND_URL=your_frontend_url
-RAZORPAY_KEY_ID=your_razorpay_key
-RAZORPAY_KEY_SECRET=your_razorpay_secret
-```
-
-### Frontend
-```
-VITE_API_URL=your_backend_url
-```
 
 ## Local Development
 
