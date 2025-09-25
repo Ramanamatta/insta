@@ -5,11 +5,12 @@ import useAuthStore from "../just/authStore.js"; // adjust the path as necessary
 
 const useGetSuggestedUsers = () => {
   const API_URL = import.meta.env.VITE_API_URL;
-
-  // get the setter directly from Zustand store
+  const user = useAuthStore((state) => state.user);
   const setSuggestedUsers = useAuthStore((state) => state.setSuggestedUsers);
 
   useEffect(() => {
+    if (!user) return;
+    
     const fetchSuggestedUsers = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/v1/user/suggested`, {
@@ -23,7 +24,7 @@ const useGetSuggestedUsers = () => {
       }
     };
     fetchSuggestedUsers();
-  }, []);
+  }, [user, API_URL, setSuggestedUsers]);
 };
 
 export default useGetSuggestedUsers;

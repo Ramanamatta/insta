@@ -21,12 +21,15 @@ const Post = ({ post }) => {
   const  posts  = usePostStore((state) => state.posts);
   const setPosts = usePostStore((state) => state.setPosts);
   const setSelectedPost = usePostStore((state) => state.setSelectedPost);
-
   const [comment, setComment] = useState(post.comments);
   const API_URL = import.meta.env.VITE_API_URL;
 
   // Derived liked state (not useState)
   const liked = post.likes.includes(user?._id);
+  
+  if (!user) {
+    return null;
+  }
 
   const onChangeEventHandler = (e) => {
     const inputText = e.target.value;
@@ -67,8 +70,8 @@ const Post = ({ post }) => {
             ? {
               ...p,
               likes: liked
-                ? p.likes.filter((id) => id !== user._id)
-                : [...p.likes, user._id],
+                ? p.likes.filter((id) => id !== user?._id)
+                : [...p.likes, user?._id],
             }
             : p
         );
@@ -132,7 +135,7 @@ const Post = ({ post }) => {
           </Avatar>
           <div className="flex items-center gap-2">
             <h1 className="font-semibold text-sm lg:text-base">{post.author?.name}</h1>
-            {user._id === post.author._id && <Badge variant="secondary" className="text-xs">Author</Badge>}
+            {user?._id === post.author?._id && <Badge variant="secondary" className="text-xs">Author</Badge>}
           </div>
         </div>
         <Dialog>
@@ -141,7 +144,7 @@ const Post = ({ post }) => {
           </DialogTrigger>
           <DialogContent className="flex flex-col items-center text-sm text-center">
             {
-              post.author._id !== user._id && (
+              post.author?._id !== user?._id && (
                 <Button
                   variant="ghost"
                   className="cursor-pointer w-fit text-[#ED4956] font-bold"
@@ -204,7 +207,7 @@ const Post = ({ post }) => {
 
         <span className="font-semibold block mb-2 text-sm">{post.likes.length} likes</span>
         <p className="text-sm mb-2">
-          <span className="font-semibold mr-2">{post.author.name}</span>
+          <span className="font-semibold mr-2">{post.author?.name}</span>
           {post.caption}
         </p>
         {comment.length > 0 && (
