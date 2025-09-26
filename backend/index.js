@@ -16,11 +16,11 @@ dotenv.config({});
 const PORT = process.env.PORT || 8000;
 
 
+const FRONTEND_URL = "https://insta-frontend-c.s3-website.eu-north-1.amazonaws.com/";
+
 app.use(cors({
-  origin: (origin, callback) => {
-    callback(null, origin); // Reflect the request origin
-  },
-  credentials: true,
+  origin: FRONTEND_URL,
+  credentials: true,
 }));
 
 
